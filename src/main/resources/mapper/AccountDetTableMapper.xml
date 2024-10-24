@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hanaback.hanabackuser.repository.AccountDetTableRepository">
+
+    <update id="updateFromAccount" parameterType="map">
+        UPDATE /*+ NO_PARALLEL(accounts_det) */ accounts_det
+        SET krw = krw - #{withdrawalAmount}
+        WHERE accounts_name = '하나저축예금'
+    </update>
+
+    <update id="updateToAccount" parameterType="map">
+        UPDATE /*+ NO_PARALLEL(accounts_det) */ accounts_det
+        SET ${currencyColumn} = ${currencyColumn} + #{depositAmount}
+        WHERE accounts_name = '하나밀리언달러통장'
+    </update>
+
+    <update id="updateFromMillionDollar" parameterType="map">
+        UPDATE /*+ NO_PARALLEL(accounts_det) */ accounts_det
+        SET ${currencyColumn} = ${currencyColumn} - #{withdrawalAmount}
+        WHERE accounts_name = '하나밀리언달러통장'
+    </update>
+
+    <update id="updateToSavingAccount" parameterType="map">
+        UPDATE /*+ NO_PARALLEL(accounts_det) */ accounts_det
+        SET krw = krw + #{depositAmount}
+        WHERE accounts_name = '하나저축예금'
+    </update>
+
+    <!-- 모든 계좌 정보 조회 -->
+    <select id="findAllAccounts" resultType="hanaback.hanabackuser.dto.AccountsDetDto">
+        SELECT accounts_name, krw, usd, jpy, eur
+        FROM accounts_det
+    </select>
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hanaback.hanabackuser.repository.AccountTrTableRepository">
+
+    <insert id="insertTransaction" parameterType="hanaback.hanabackuser.dto.AccountsTrDto">
+        INSERT INTO accounts_tr (user_id, from_account_number, to_account_number, withdrawal_amount, deposit_amount, currency_code, transaction_date, transaction_type, conclusion_status, reservation_period, request_amount)
+        VALUES (#{user_id}, #{from_account_number}, #{to_account_number}, #{withdrawal_amount}, #{deposit_amount}, #{currency_code}, SYSDATE, #{transaction_type}, #{conclusion_status}, #{reservation_period}, #{request_amount})
+    </insert>
+
+    <!-- reserved 상태의 트랜잭션을 조회하는 쿼리 -->
+    <select id="getReservedTransactions" resultType="hanaback.hanabackuser.dto.AccountsTrDto">
+        SELECT
+            user_id,
+            transaction_id,
+            from_account_number,
+            to_account_number,
+            withdrawal_amount,
+            deposit_amount,
+            currency_code,
+            transaction_date,
+            transaction_type,
+            conclusion_status,
+            reservation_period,
+            request_amount
+        FROM accounts_tr
+        WHERE conclusion_status = 'reserved'
+    </select>
+
+    <!-- 트랜잭션을 업데이트하는 쿼리 -->
+    <update id="updateTransaction" parameterType="hanaback.hanabackuser.dto.AccountsTrDto">
+        UPDATE accounts_tr
+        SET
+            withdrawal_amount = #{withdrawal_amount},
+            deposit_amount = #{deposit_amount},
+            currency_code = #{currency_code},
+            transaction_type = #{transaction_type},
+            conclusion_status = #{conclusion_status},
+            reservation_period = #{reservation_period}
+        WHERE
+            transaction_id = #{transaction_id}
+    </update>
+    <!-- 전체 accounts_tr 데이터를 가져오는 쿼리 -->
+    <select id="getAllTransactions" resultType="hanaback.hanabackuser.dto.AccountsTrDto">
+        SELECT user_id,
+               transaction_id,
+               from_account_number,
+               to_account_number,
+               withdrawal_amount,
+               deposit_amount,
+               currency_code,
+               transaction_date,
+               transaction_type,
+               conclusion_status,
+               reservation_period
+        FROM accounts_tr
+    </select>
+
+</mapper>
